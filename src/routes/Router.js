@@ -1,20 +1,28 @@
-import { createStackNavigator, createSwitchNavigator } from 'react-navigation';
-import SplashScreen from '../screens/SplashScreen';
-import HomeScreen from '../screens/HomeScreen';
-import LoginScreen from '../screens/LoginScreen';
+import { createStackNavigator, createSwitchNavigator } from "react-navigation";
+import HomeScreen from "../screens/HomeScreen";
+import LoginScreen from "../screens/LoginScreen";
+import TodoScreen from "../screens/TodoScreen";
 
-const AppStack = createStackNavigator({ Home: HomeScreen });
+const HomeStack = createStackNavigator(
+  { Home: HomeScreen },
+  { headerMode: "none" }
+);
 const AuthStack = createStackNavigator(
   { Login: LoginScreen },
-  { headerMode: 'none' }
+  { headerMode: "none" }
+);
+const AppStack = createStackNavigator(
+  { Todos: TodoScreen },
+  { headerMode: "none" }
 );
 
 export default createSwitchNavigator(
   {
     Auth: AuthStack,
+    Home: HomeStack,
     App: AppStack
   },
   {
-    initialRouteName: 'Auth'
+    initialRouteName: "Home"
   }
 );
