@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 
 class HomeScreen extends Component {
   async componentDidMount() {
-    if (this.props.user.user === null) {
+    if (this.props.user === null) {
       this.props.navigation.navigate("Auth");
     } else {
       this.props.navigation.navigate("App");
@@ -20,8 +20,8 @@ class HomeScreen extends Component {
   }
 }
 
-const mapStateToProps = ({ user }) => {
-  return { user };
+const mapStateToProps = ({ todo }) => {
+  return { user: todo.user };
 };
 
 export default connect(mapStateToProps)(HomeScreen);

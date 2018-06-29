@@ -1,6 +1,13 @@
-import { ADD_TODO, FETCH_TODOS, FETCHED_TODOS } from "../types/todoTypes";
-import { PURGE } from "redux-persist";
+import {
+  ADD_TODO,
+  FETCH_TODOS,
+  FETCHED_TODOS,
+  REMOVE_TODO,
+  PURGE,
+  USER
+} from "../types/todoTypes";
 import axios from "axios";
+import { persistor } from "../../configureStore";
 
 export const fetchTodos = () => dispatch => {
   dispatch({ type: FETCH_TODOS });
@@ -10,16 +17,6 @@ export const fetchTodos = () => dispatch => {
     .then(todos => {
       console.log(todos);
       if (todos !== null && todos.status === 200) {
-        // todos.data.forEach(todo => {
-        //   dispatch({
-        //     type: ADD_TODO,
-        //     payload: {
-        //       title: todo.title,
-        //       date: new Date(),
-        //       isCompleted: todo.completed
-        //     }
-        //   });
-        // });
         const newTodos = todos.data.map(todo => {
           return {
             ...todo,
@@ -31,8 +28,20 @@ export const fetchTodos = () => dispatch => {
     });
 };
 
+export const setUser = user => {
+  return {
+    type: USER,
+    payload: { user }
+  };
+};
+
 export const purge = () => {
+  persistor.purge({ key: "root" });
   return { type: PURGE };
+};
+
+export const deleteTodo = todo => {
+  return { type: REMOVE_TODO, payload: todo };
 };
 
 export const setFilter = () => {};

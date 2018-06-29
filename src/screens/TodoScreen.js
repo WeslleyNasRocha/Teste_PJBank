@@ -36,10 +36,17 @@ class TodoScreen extends Component {
         <Header>
           <Left />
           <Body>
-            <Title>Todos -> {this.props.user.user}</Title>
+            <Title>Todos -> {this.props.todo.user}</Title>
           </Body>
           <Right>
-            <Button hasText transparent>
+            <Button
+              hasText
+              transparent
+              onPress={() => {
+                this.props.purge();
+                this.props.navigation.navigate("Auth");
+              }}
+            >
               <Text>Log Out </Text>
               <Icon name="log-out" />
             </Button>
@@ -55,8 +62,8 @@ class TodoScreen extends Component {
   }
 }
 
-const mapStateToProps = ({ user, todo }) => {
-  return { user, todo };
+const mapStateToProps = ({ todo }) => {
+  return { todo };
 };
 
 export default connect(

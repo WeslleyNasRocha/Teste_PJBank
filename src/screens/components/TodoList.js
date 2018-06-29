@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View } from "react-native";
+import { View, ListView } from "react-native";
 import {
   Button,
   Text,
@@ -10,15 +10,19 @@ import {
   Card,
   CardItem,
   SwipeRow,
-  Right
+  Right,
+  Badge
 } from "native-base";
 
 import { connect } from "react-redux";
+
+import { deleteTodo } from "../../actions/todoActions";
 
 class TodosList extends Component {
   constructor(props) {
     super(props);
     this.state = { filter: "all" };
+    // this.ds = new ListView.dat
   }
 
   onFilterValueChange(value) {
@@ -33,13 +37,13 @@ class TodosList extends Component {
         leftOpenValue={75}
         rightOpenValue={-150}
         left={
-          <Button danger>
+          <Button danger onPress={() => this.props.deleteTodo(item)}>
             <Icon name="trash" active />
           </Button>
         }
         right={
           <View style={{ flexDirection: "row" }}>
-            <Button warning onPress={() => console.log(item)}>
+            <Button warning>
               <Icon name="create" active />
             </Button>
             <Button success>
@@ -49,10 +53,21 @@ class TodosList extends Component {
         }
         body={
           <View
-            style={{ flexDirection: "row", justifyContent: "space-between" }}
+            style={{ flexDirection: "row", flex: 1, alignContent: "stretch" }}
           >
-            <Text style={{ padding: 5 }}>{item.title}</Text>
-            <Text>{new Date(item.date).toLocaleDateString("pt-br")}</Text>
+            <Text style={{ padding: 5, alignSelf: "flex-start", flex: 2 }}>
+              {item.title}
+            </Text>
+            <Badge primary>
+              <Text
+                style={{
+                  flex: 1,
+                  justifyContent: "center"
+                }}
+              >
+                {new Date(item.date).toLocaleDateString("pt-br")}
+              </Text>
+            </Badge>
           </View>
         }
       />
@@ -83,8 +98,9 @@ class TodosList extends Component {
           </CardItem>
           <CardItem>
             <List
-              dataArray={this.props.filtered}
+              dataArray={this.props.todos}
               renderRow={item => this.renderRow(item)}
+              closeOnRowBeginSwipe
             />
           </CardItem>
         </Card>
@@ -94,8 +110,11 @@ class TodosList extends Component {
 }
 
 const mapStateToProps = ({ todo }) => {
-  const { filtered, todos, filter } = todo;
-  return { todos, filtered, filter };
+  const {  todos, filter } = todo;
+  return { todos,  filter };
 };
 
-export default connect(mapStateToProps)(TodosList);
+export default connect(
+  mapStateToProps,
+  { deleteTodo }
+)(TodosList);

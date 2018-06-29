@@ -12,7 +12,7 @@ import {
 
 import { connect } from "react-redux";
 
-import { setUser } from "../actions/userActions";
+import { setUser } from "../actions/todoActions";
 
 class LoginScreen extends Component {
   constructor(props) {
