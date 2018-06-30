@@ -1,10 +1,14 @@
 import {
   ADD_TODO,
   FETCH_TODOS,
-  FETCHED_TODOS,
-  REMOVE_TODO,
+  SET_TODOS,
   PURGE,
-  USER
+  USER,
+  DELETE_TODO,
+  UPDATE_TODO,
+  COMPLETE_TODO,
+  SET_ID_COUNT,
+  INCREASE_ID
 } from "../types/todoTypes";
 import axios from "axios";
 import { persistor } from "../../configureStore";
@@ -19,11 +23,14 @@ export const fetchTodos = () => dispatch => {
       if (todos !== null && todos.status === 200) {
         const newTodos = todos.data.map(todo => {
           return {
-            ...todo,
+            id: todo.id,
+            title: todo.title,
+            isCompleted: todo.completed,
             date: new Date()
           };
         });
-        dispatch({ type: FETCHED_TODOS, payload: newTodos });
+        dispatch({ type: SET_ID_COUNT, payload: newTodos.length });
+        dispatch({ type: SET_TODOS, payload: newTodos });
       }
     });
 };
@@ -35,21 +42,39 @@ export const setUser = user => {
   };
 };
 
+export const updateTodo = todo => {
+  return {
+    type: UPDATE_TODO,
+    payload: todo
+  };
+};
+
 export const purge = () => {
   persistor.purge({ key: "root" });
   return { type: PURGE };
 };
 
+export const setTodos = todos => {
+  return { type: SET_TODOS, payload: todos };
+};
+
 export const deleteTodo = todo => {
-  return { type: REMOVE_TODO, payload: todo };
+  return { type: DELETE_TODO, payload: todo };
 };
 
 export const setFilter = () => {};
 
-export const addTodo = (todo, date) => {
-  console.log(todo);
-  return {
+export const addTodo = todo => dispatch => {
+  dispatch({ type: INCREASE_ID });
+  dispatch({
     type: ADD_TODO,
-    payload: { text: todo, date }
+    payload: { todo }
+  });
+};
+
+export const completeTodo = todo => {
+  return {
+    type: COMPLETE_TODO,
+    payload: todo
   };
 };

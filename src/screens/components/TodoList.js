@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, ListView } from "react-native";
+import { View, ListView, StyleSheet } from "react-native";
 import {
   Button,
   Text,
@@ -11,18 +11,20 @@ import {
   CardItem,
   SwipeRow,
   Right,
-  Badge
+  Badge,
+  ListItem
 } from "native-base";
 
 import { connect } from "react-redux";
 
-import { deleteTodo } from "../../actions/todoActions";
-
+import { setTodos, completeTodo } from "../../actions/todoActions";
 class TodosList extends Component {
   constructor(props) {
     super(props);
-    this.state = { filter: "all" };
-    // this.ds = new ListView.dat
+    this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
+    this.state = {
+      basic: true
+    };
   }
 
   onFilterValueChange(value) {
@@ -30,48 +32,19 @@ class TodosList extends Component {
       filter: value
     });
   }
+  deleteRow(secId, rowId, rowMap) {
+    rowMap[`${secId}${rowId}`].props.closeRow();
+    const newData = [...this.props.todos];
+    newData.splice(rowId, 1);
+    this.props.setTodos(newData);
+  }
 
-  renderRow(item) {
-    return (
-      <SwipeRow
-        leftOpenValue={75}
-        rightOpenValue={-150}
-        left={
-          <Button danger onPress={() => this.props.deleteTodo(item)}>
-            <Icon name="trash" active />
-          </Button>
-        }
-        right={
-          <View style={{ flexDirection: "row" }}>
-            <Button warning>
-              <Icon name="create" active />
-            </Button>
-            <Button success>
-              <Icon name="checkmark" active />
-            </Button>
-          </View>
-        }
-        body={
-          <View
-            style={{ flexDirection: "row", flex: 1, alignContent: "stretch" }}
-          >
-            <Text style={{ padding: 5, alignSelf: "flex-start", flex: 2 }}>
-              {item.title}
-            </Text>
-            <Badge primary>
-              <Text
-                style={{
-                  flex: 1,
-                  justifyContent: "center"
-                }}
-              >
-                {new Date(item.date).toLocaleDateString("pt-br")}
-              </Text>
-            </Badge>
-          </View>
-        }
-      />
-    );
+  edit(todo) {
+    this.props.navigation.navigate("Editor", { todo: todo });
+  }
+
+  completeTodo(todo) {
+    this.props.completeTodo(todo);
   }
 
   render() {
@@ -98,9 +71,59 @@ class TodosList extends Component {
           </CardItem>
           <CardItem>
             <List
-              dataArray={this.props.todos}
-              renderRow={item => this.renderRow(item)}
-              closeOnRowBeginSwipe
+              dataSource={this.ds.cloneWithRows(this.props.todos)}
+              renderRow={item => (
+                <ListItem
+                  style={
+                    item.isCompleted ? styles.completed : styles.notCompleted
+                  }
+                >
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      flex: 1,
+                      alignContent: "stretch"
+                    }}
+                  >
+                    <Text
+                      style={{ padding: 5, alignSelf: "flex-start", flex: 2 }}
+                    >
+                      {item.title}
+                    </Text>
+                    <Badge primary>
+                      <Text
+                        style={{
+                          flex: 1,
+                          justifyContent: "center"
+                        }}
+                      >
+                        {new Date(item.date).toLocaleDateString("pt-br")}
+                      </Text>
+                    </Badge>
+                  </View>
+                </ListItem>
+              )}
+              renderLeftHiddenRow={(data, secId, rowId, rowMap) => (
+                <Button
+                  full
+                  danger
+                  onPress={_ => this.deleteRow(secId, rowId, rowMap)}
+                >
+                  <Icon name="trash" active />
+                </Button>
+              )}
+              renderRightHiddenRow={(data, secId, rowId, rowMap) => (
+                <View style={{ flexDirection: "row" }}>
+                  <Button warning full onPress={() => this.edit(data)}>
+                    <Icon name="create" active />
+                  </Button>
+                  <Button success full onPress={() => this.completeTodo(data)}>
+                    <Icon name="checkmark" active />
+                  </Button>
+                </View>
+              )}
+              leftOpenValue={75}
+              rightOpenValue={-150}
             />
           </CardItem>
         </Card>
@@ -109,12 +132,21 @@ class TodosList extends Component {
   }
 }
 
+const styles = StyleSheet.create({
+  notCompleted: {
+    backgroundColor: "white"
+  },
+  completed: {
+    backgroundColor: "#00B294"
+  }
+});
+
 const mapStateToProps = ({ todo }) => {
-  const {  todos, filter } = todo;
-  return { todos,  filter };
+  const { todos } = todo;
+  return { todos };
 };
 
 export default connect(
   mapStateToProps,
-  { deleteTodo }
+  { setTodos, completeTodo }
 )(TodosList);

@@ -2,6 +2,7 @@ import { createStackNavigator, createSwitchNavigator } from "react-navigation";
 import HomeScreen from "../screens/HomeScreen";
 import LoginScreen from "../screens/LoginScreen";
 import TodoScreen from "../screens/TodoScreen";
+import EditorScreen from "../screens/EditorScreen";
 
 const HomeStack = createStackNavigator(
   { Home: HomeScreen },
@@ -12,10 +13,9 @@ const AuthStack = createStackNavigator(
   { headerMode: "none" }
 );
 const AppStack = createStackNavigator(
-  { Todos: TodoScreen },
-  { headerMode: "none" }
+  { Todos: TodoScreen, Editor: EditorScreen },
+  { headerMode: "none", initialRouteName: "Todos" }
 );
-
 export default createSwitchNavigator(
   {
     Auth: AuthStack,

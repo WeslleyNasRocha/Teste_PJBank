@@ -7,7 +7,8 @@ import {
   Input,
   Item,
   Button,
-  Text
+  Text,
+  Card
 } from "native-base";
 
 import { connect } from "react-redux";
@@ -20,7 +21,6 @@ class LoginScreen extends Component {
     this.state = { user: "" };
   }
   render() {
-    // console.log(this.state);
     return (
       <Container>
         <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
@@ -48,7 +48,7 @@ class LoginScreen extends Component {
                   }
                 }}
               >
-                <Text>Logar-se</Text>
+                <Text>Log In</Text>
               </Button>
             </Form>
           </Content>

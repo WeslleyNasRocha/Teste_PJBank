@@ -54,7 +54,7 @@ class TodoScreen extends Component {
         </Header>
         <Content padder>
           <AddTodoForm />
-          <TodoList />
+          <TodoList navigation={this.props.navigation} />
           <Spinner visible={this.props.todo.isFetching} />
         </Content>
       </Container>

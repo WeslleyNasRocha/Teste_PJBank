@@ -1,10 +1,12 @@
 import {
   ADD_TODO,
-  FETCHED_TODOS,
+  SET_TODOS,
   FETCH_TODOS,
-  REMOVE_TODO,
+  UPDATE_TODO,
   PURGE,
-  USER
+  USER,
+  DELETE_TODO,
+  COMPLETE_TODO
 } from "../types/todoTypes";
 
 const initialState = {
@@ -26,41 +28,45 @@ export default (state = initialState, action) => {
       };
 
     case ADD_TODO:
-      return {
-        ...state,
-        todos: [
-          ...state.todos,
-          {
-            title: action.payload.title,
-            date: action.payload.date,
-            isCompleted: action.isCompleted
-          }
-        ],
-        filtered: [
-          ...state.filtered,
-          {
-            title: action.payload.title,
-            date: action.payload.date,
-            isCompleted: action.isCompleted
-          }
-        ],
-        isFetching: false
-      };
+      console.log(action);
+      const { title, date } = action.payload.todo;
+      const newTodo = { title, date, id: state.idCount, isComplete: false };
+      return { ...state, todos: state.todos.concat(newTodo) };
 
     case FETCH_TODOS:
       return { ...state, isFetching: true };
 
-    case FETCHED_TODOS:
+    case SET_TODOS:
       return {
         ...state,
         isFetching: false,
         todos: action.payload
       };
 
-    case REMOVE_TODO:
+    case UPDATE_TODO:
+      return {
+        ...state,
+        todos: state.todos.map(
+          todo => (todo.id === action.payload.id ? { ...action.payload } : todo)
+        )
+      };
+    case COMPLETE_TODO:
+      return {
+        ...state,
+        todos: state.todos.map(
+          todo =>
+            todo.id === action.payload.id
+              ? { ...todo, isCompleted: !action.payload.isCompleted }
+              : todo
+        )
+      };
+
+    case DELETE_TODO:
       const index = state.todos.indexOf(action.payload);
-      const newArray = state.todos.splice(index, 1);
-      return { ...state, todos: newArray };
+      state.todos.splice(index, 1);
+      // console.log({ todos: state.todos, old });
+      return { ...state, todos: state.todos };
+
     default:
       return state;
   }
