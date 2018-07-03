@@ -1,5 +1,8 @@
 import React, { Component } from "react";
 import { View, Keyboard } from "react-native";
+
+import moment from "../../util/moment";
+
 import {
   Button,
   Text,
@@ -7,11 +10,11 @@ import {
   Form,
   Input,
   Item,
-  DatePicker,
   Card
 } from "native-base";
 
 import Toast from "react-native-root-toast";
+import Datepicker from "react-native-datepicker";
 
 import { connect } from "react-redux";
 
@@ -28,10 +31,11 @@ class AddTodoForm extends Component {
   }
 
   setDate(newDate) {
-    this.setState({ date: new Date(newDate) });
+    this.setState({ date: moment(newDate,"DD/MM/YYYY")});
   }
 
   render() {
+    const { title, date } = this.state;
     return (
       <Card>
         <View style={{ marginVertical: 20, marginHorizontal: 5 }}>
@@ -40,21 +44,25 @@ class AddTodoForm extends Component {
               <Input
                 placeholder="Create a new todo item"
                 onChangeText={title => this.setState({ title })}
+                value={title}
               />
             </Item>
-            <View style={{ marginTop: 20, flex: 1, flexDirection: "row" }}>
+            <View style={{ marginTop: 20, marginLeft: 15, flex: 1, flexDirection: "row" }}>
               <View style={{ flex: 1 }}>
-                <DatePicker
-                  defaultDate={null}
-                  minimumDate={new Date()}
-                  locale={"pt-br"}
-                  timeZoneOffsetInMinutes={undefined}
-                  modalTransparent={false}
-                  animationType={"slide"}
-                  androidMode={"default"}
-                  placeHolderText="Select date you want to remember"
-                  placeHolderTextStyle={{ color: "#738" }}
-                  onDateChange={this.setDate}
+                <Datepicker
+                  date={date ? moment(date).format("DD/MM/YYYY") : ""}
+                  mode="date"
+                  placeholder="Please select a date"
+                  format="DD/MM/YYYY"
+                  minDate={new Date()}
+                  confirmBtnText="Confirm"
+                  cancelBtnText="Cancel"
+                  onDateChange={(date) => {
+                    console.log(date);
+                    this.setDate(date)
+                  }}
+                  showIcon={false}
+                  style={{ width: 250 }}
                 />
               </View>
               <Button
@@ -62,7 +70,7 @@ class AddTodoForm extends Component {
                 style={{ flex: 0 }}
                 onPress={() => {
                   Keyboard.dismiss();
-                  if (this.state.title === "") {
+                  if (title === "") {
                     const toast = Toast.show("Title cannot be empty", {
                       duration: Toast.durations.SHORT,
                       position: Toast.positions.BOTTOM,
@@ -71,7 +79,7 @@ class AddTodoForm extends Component {
                       hideOnPress: true,
                       delay: 0
                     });
-                  } else if (this.state.date === null) {
+                  } else if (date === null) {
                     const toast = Toast.show("Date cannot be empty", {
                       duration: Toast.durations.SHORT,
                       position: Toast.positions.BOTTOM,
@@ -81,11 +89,11 @@ class AddTodoForm extends Component {
                       delay: 0
                     });
                   } else {
-                    this.props.addTodo(this.state);
                     this.setState({
                       title: "",
                       date: null
                     });
+                    this.props.addTodo({ title, date: moment(date,"DD/MM/YYYY").toISOString() });
                   }
                 }}
               >

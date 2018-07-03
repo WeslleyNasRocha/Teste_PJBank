@@ -23,6 +23,7 @@ import {
 } from "native-base";
 
 import { updateTodo } from "../actions/todoActions";
+import EditTodoForm from "./components/EditTodoForm";
 
 class EditorScreen extends Component {
   constructor(props) {
@@ -34,10 +35,11 @@ class EditorScreen extends Component {
       isCompleted: this.todo.isCompleted,
       id: this.todo.id
     };
+    this.editTodo = this.editTodo.bind(this);
   }
 
-  editTodo() {
-    this.props.updateTodo(this.state);
+  editTodo(todo) {
+    this.props.updateTodo(todo);
     this.props.navigation.goBack();
   }
 
@@ -63,63 +65,7 @@ class EditorScreen extends Component {
           <Right />
         </Header>
         <Content padder>
-          <Card>
-            <Form style={{ margin: 10 }}>
-              <Item floatingLabel>
-                <Label>Nome</Label>
-                <Input
-                  value={this.state.title}
-                  onChangeText={title => this.setState({ title })}
-                />
-              </Item>
-              <View
-                style={{
-                  marginTop: 20,
-                  flex: 1,
-                  flexDirection: "row",
-                  marginBottom: 20
-                }}
-              >
-                <View style={{ flex: 1 }}>
-                  <Text style={{ marginLeft: 15 }}>Date</Text>
-                  <DatePicker
-                    defaultDate={new Date(this.todo.date)}
-                    minimumDate={new Date(2018, 1, 1)}
-                    maximumDate={new Date(2018, 12, 31)}
-                    locale={"pt-BR"}
-                    timeZoneOffsetInMinutes={undefined}
-                    modalTransparent={false}
-                    animationType={"fade"}
-                    androidMode={"default"}
-                    textStyle={{ color: "green" }}
-                    placeHolderText={this.state.date.toLocaleDateString(
-                      "pt-BR"
-                    )}
-                    onDateChange={date => this.setState({ date })}
-                  />
-                </View>
-                <View style={{ flex: 0 }}>
-                  <Body>
-                    <Text>Completed?</Text>
-                  </Body>
-                  <CheckBox
-                    checked={this.state.isCompleted}
-                    onPress={() =>
-                      this.setState({ isCompleted: !this.state.isCompleted })
-                    }
-                  />
-                </View>
-              </View>
-              <Button
-                full
-                onPress={() => {
-                  this.editTodo();
-                }}
-              >
-                <Text>Save</Text>
-              </Button>
-            </Form>
-          </Card>
+          <EditTodoForm todo={this.todo} update={this.editTodo} />
         </Content>
       </Container>
     );

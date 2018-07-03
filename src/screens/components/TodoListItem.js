@@ -3,19 +3,21 @@ import { View, StyleSheet, Picker } from "react-native";
 
 import { Text, Badge, Icon } from "native-base";
 
+import moment from "../../util/moment";
+
 export default class TodoListItem extends PureComponent {
   constructor(props) {
     super(props);
   }
   render() {
-    const { title, date, isCompleted, id } = this.props.todo;
+    const { title, date, isCompleted, id } = this.props.todo;       
     return (
       <View style={styles.container}>
         <Text style={[styles.text, isCompleted ? styles.textCompleted : ""]}>
           {title}
         </Text>
         <Badge style={styles.date}>
-          <Text>{new Date(date).toLocaleDateString("en-GB")}</Text>
+          <Text>{moment(date).format("DD/MM/YYYY").toString()}</Text>
         </Badge>
         <View style={styles.optionContainer}>
           <Icon name="more" style={styles.optionPicker} />
