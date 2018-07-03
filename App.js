@@ -1,6 +1,6 @@
 import React from "react";
 import { ActivityIndicator } from "react-native";
-import { Font } from "expo";
+import { Root } from "native-base";
 
 import { Provider } from "react-redux";
 
@@ -35,12 +35,14 @@ export default class App extends React.Component {
       return <Expo.AppLoading />;
     }
     return (
-      <Provider store={store} >
+      <Provider store={store}>
         <PersistGate
           loading={<ActivityIndicator size="large" color="red" />}
           persistor={persistor}
         >
-          <Router />
+          <Root>
+            <Router />
+          </Root>
         </PersistGate>
       </Provider>
     );

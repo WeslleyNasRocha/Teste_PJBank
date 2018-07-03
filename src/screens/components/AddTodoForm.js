@@ -1,16 +1,17 @@
 import React, { Component } from "react";
-import { View } from "react-native";
+import { View, Keyboard } from "react-native";
 import {
   Button,
   Text,
   Icon,
   Form,
-  Picker,
   Input,
   Item,
   DatePicker,
   Card
 } from "native-base";
+
+import Toast from "react-native-root-toast";
 
 import { connect } from "react-redux";
 
@@ -21,7 +22,7 @@ class AddTodoForm extends Component {
     super(props);
     this.state = {
       title: "",
-      date: new Date()
+      date: null
     };
     this.setDate = this.setDate.bind(this);
   }
@@ -44,7 +45,7 @@ class AddTodoForm extends Component {
             <View style={{ marginTop: 20, flex: 1, flexDirection: "row" }}>
               <View style={{ flex: 1 }}>
                 <DatePicker
-                  defaultDate={new Date()}
+                  defaultDate={null}
                   minimumDate={new Date()}
                   locale={"pt-br"}
                   timeZoneOffsetInMinutes={undefined}
@@ -60,11 +61,32 @@ class AddTodoForm extends Component {
                 iconRight
                 style={{ flex: 0 }}
                 onPress={() => {
-                  this.props.addTodo(this.state);
-                  this.setState({
-                    title: "",
-                    date: new Date()
-                  });
+                  Keyboard.dismiss();
+                  if (this.state.title === "") {
+                    const toast = Toast.show("Title cannot be empty", {
+                      duration: Toast.durations.SHORT,
+                      position: Toast.positions.BOTTOM,
+                      shadow: true,
+                      animation: true,
+                      hideOnPress: true,
+                      delay: 0
+                    });
+                  } else if (this.state.date === null) {
+                    const toast = Toast.show("Date cannot be empty", {
+                      duration: Toast.durations.SHORT,
+                      position: Toast.positions.BOTTOM,
+                      shadow: true,
+                      animation: true,
+                      hideOnPress: true,
+                      delay: 0
+                    });
+                  } else {
+                    this.props.addTodo(this.state);
+                    this.setState({
+                      title: "",
+                      date: null
+                    });
+                  }
                 }}
               >
                 <Text>Create</Text>

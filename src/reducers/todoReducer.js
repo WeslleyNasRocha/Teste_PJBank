@@ -6,14 +6,17 @@ import {
   PURGE,
   USER,
   DELETE_TODO,
-  COMPLETE_TODO
+  COMPLETE_TODO,
+  INCREASE_ID,
+  SET_ID_COUNT
 } from "../types/todoTypes";
 
 const initialState = {
   todos: [],
   filter: "all",
   isFetching: true,
-  user: null
+  user: null,
+  idCount: 0
 };
 
 export default (state = initialState, action) => {
@@ -28,7 +31,7 @@ export default (state = initialState, action) => {
       };
 
     case ADD_TODO:
-      console.log(action);
+      console.log(action, state);
       const { title, date } = action.payload.todo;
       const newTodo = { title, date, id: state.idCount, isComplete: false };
       return { ...state, todos: state.todos.concat(newTodo) };
@@ -50,6 +53,7 @@ export default (state = initialState, action) => {
           todo => (todo.id === action.payload.id ? { ...action.payload } : todo)
         )
       };
+
     case COMPLETE_TODO:
       return {
         ...state,
@@ -61,11 +65,17 @@ export default (state = initialState, action) => {
         )
       };
 
+    case INCREASE_ID:
+      return { ...state, idCount: state.idCount + 1 };
+
+    case SET_ID_COUNT:
+      return { ...state, idCount: action.payload };
+
     case DELETE_TODO:
-      const index = state.todos.indexOf(action.payload);
-      state.todos.splice(index, 1);
-      // console.log({ todos: state.todos, old });
-      return { ...state, todos: state.todos };
+      const newTodos = state.todos.filter(todo => {
+        return todo.id !== action.payload.id;
+      });
+      return { ...state, todos: newTodos };
 
     default:
       return state;
