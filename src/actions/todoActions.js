@@ -11,11 +11,13 @@ import {
   INCREASE_ID
 } from "../types/todoTypes";
 import axios from "axios";
+import Toast from "react-native-root-toast";
 import { persistor } from "../../configureStore";
+import moment from "../util/moment";
 
 export const fetchTodos = () => dispatch => {
   dispatch({ type: FETCH_TODOS });
-  // TODO change id
+  console.log(moment().format("L"))
   axios
     .get("https://jsonplaceholder.typicode.com/todos?userId=1")
     .then(todos => {
@@ -26,7 +28,7 @@ export const fetchTodos = () => dispatch => {
             id: todo.id,
             title: todo.title,
             isCompleted: todo.completed,
-            date: new Date()
+            date: moment()
           };
         });
         dispatch({ type: SET_ID_COUNT, payload: newTodos.length });
@@ -59,12 +61,28 @@ export const setTodos = todos => {
 };
 
 export const deleteTodo = todo => {
+  Toast.show("Todo Deleted", {
+    duration: Toast.durations.SHORT,
+    position: Toast.positions.BOTTOM,
+    shadow: true,
+    animation: true,
+    hideOnPress: true,
+    delay: 0
+  });
   return { type: DELETE_TODO, payload: todo };
 };
 
-export const setFilter = () => {};
+export const setFilter = () => { };
 
 export const addTodo = todo => dispatch => {
+  Toast.show("Todo Added", {
+    duration: Toast.durations.SHORT,
+    position: Toast.positions.BOTTOM,
+    shadow: true,
+    animation: true,
+    hideOnPress: true,
+    delay: 0
+  });
   dispatch({ type: INCREASE_ID });
   dispatch({
     type: ADD_TODO,
@@ -73,6 +91,20 @@ export const addTodo = todo => dispatch => {
 };
 
 export const completeTodo = todo => {
+  let msg = ""
+  if (todo.isCompleted) {
+    msg = "Todo marked as incompleted"
+  } else {
+    msg = "Todo marked as completed"
+  }
+  Toast.show(msg, {
+    duration: Toast.durations.SHORT,
+    position: Toast.positions.BOTTOM,
+    shadow: true,
+    animation: true,
+    hideOnPress: true,
+    delay: 0
+  });
   return {
     type: COMPLETE_TODO,
     payload: todo

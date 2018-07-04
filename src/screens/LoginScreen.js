@@ -15,6 +15,8 @@ import { connect } from "react-redux";
 
 import { setUser } from "../actions/todoActions";
 
+import Toast from "react-native-root-toast";
+
 class LoginScreen extends Component {
   constructor(props) {
     super(props);
@@ -42,9 +44,18 @@ class LoginScreen extends Component {
               <Button
                 block
                 onPress={() => {
-                  if (this.state.user !== null && this.state.user !== "") {
+                  if (this.state.user !== "") {
                     this.props.setUser(this.state.user);
                     this.props.navigation.navigate("App");
+                  } else{
+                    const toast = Toast.show("Name cannot be empty", {
+                      duration: Toast.durations.SHORT,
+                      position: Toast.positions.BOTTOM,
+                      shadow: true,
+                      animation: true,
+                      hideOnPress: true,
+                      delay: 0
+                    });
                   }
                 }}
               >
